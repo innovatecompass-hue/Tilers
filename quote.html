@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get a Quote | Precision Tile Co. — Shreveport, LA</title>
+  <meta name="description" content="Get an instant tile installation estimate from Precision Tile Co. Enter your room dimensions, choose your Daltile product, and see a detailed quote in minutes."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens — matches main site ── */
+    :root {
+      --primary:    #c8860a;
+      --primary-dk: #a06e08;
+      --dark:       #1a1714;
+      --dark-soft:  #2d2924;
+      --mid:        #6b6460;
+      --light:      #f7f4f0;
+      --white:      #ffffff;
+      --border:     #e8e2d9;
+      --accent:     #4a7c6f;
+
+      --font-body:    'Inter', sans-serif;
+      --font-display: 'Playfair Display', serif;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --shadow-md: 0 4px 20px rgba(0,0,0,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--dark);
+      background: var(--light);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+    input, select, textarea { font-family: inherit; }
+
+    /* ── Nav ── */
+    .nav {
+      background: var(--dark);
+      color: var(--white);
+      padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .nav__back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .88rem;
+      color: rgba(255,255,255,.65);
+      transition: color .2s;
+    }
+    .nav__back:hover { color: var(--white); }
+    .nav__logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--white);
+    }
+    .nav__logo-icon { color: var(--primary); font-size: 1.3rem; }
+    .nav__badge {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: rgba(200,134,10,.12);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(200,134,10,.25);
+    }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1100px;
+      margin-inline: auto;
+      padding-inline: clamp(1rem, 4vw, 2rem);
+    }
+
+    /* ── Progress Stepper ── */
+    .stepper-wrap {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding-inline: clamp(1rem, 4vw, 2rem);
+    }
+    .stepper {
+      max-width: 1100px;
+      margin-inline: auto;
+      display: flex;
+      align-items: stretch;
+    }
+    .step-tab {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 20px;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--mid);
+      border-bottom: 3px solid transparent;
+      transition: all .2s;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .step-tab.active  { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .step-tab.done    { color: var(--accent); }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--mid);
+      font-size: .8rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .step-tab.active .step-num { background: var(--primary); color: var(--white); }
+    .step-tab.done   .step-num { background: var(--accent);  color: var(--white); }
+    .step-connector { width: 32px; align-self: center; height: 1px; background: var(--border); flex-shrink: 0; }
+
+    /* ── Step panels ── */
+    .step-panel { display: none; padding: 40px 0 80px; }
+    .step-panel.active { display: block; }
+
+    /* ── Section headers ── */
+    .step-eyebrow {
+      font-size: .75rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--primary); margin-bottom: .35rem;
+    }
+    .step-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+      line-height: 1.2; color: var(--dark); margin-bottom: .5rem;
+    }
+    .step-sub { color: var(--mid); font-size: .95rem; margin-bottom: 36px; }
+
+    /* ── Form elements ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: .82rem; font-weight: 600; color: var(--dark); }
+    .form-group input,
+    .form-group select {
+      height: 46px; padding: 0 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .95rem; color: var(--dark);
+      background: var(--white);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(200,134,10,.12);
+    }
+    .hint { font-size: .76rem; color: var(--mid); margin-top: 2px; }
+
+    /* Dimension row */
+    .dim-row { display: flex; align-items: center; gap: 10px; }
+    .dim-row input { flex: 1; }
+    .dim-sep { font-size: 1.1rem; color: var(--mid); flex-shrink: 0; }
+
+    /* Live sqft display */
+    .sqft-display {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 7px;
+      padding: 10px 18px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-top: 10px;
+    }
+    .sqft-display .val {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .sqft-display .lbl { font-size: .82rem; color: var(--mid); }
+
+    /* Waste selector */
+    .option-row { display: flex; gap: 10px; }
+    .opt-btn {
+      flex: 1; padding: 10px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .88rem; font-weight: 500;
+      color: var(--mid); background: var(--white);
+      text-align: center; cursor: pointer;
+      transition: all .2s;
+    }
+    .opt-btn small { display: block; font-size: .7rem; font-weight: 400; margin-top: 2px; }
+    .opt-btn:hover { border-color: var(--primary); color: var(--dark); }
+    .opt-btn.active {
+      border-color: var(--primary);
+      background: rgba(200,134,10,.06);
+      color: var(--primary); font-weight: 600;
+    }
+
+    /* Project type */
+    .type-btn { flex: 1; }
+    .type-icon { font-size: 1.4rem; display: block; margin-bottom: 5px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px;
+      border-radius: var(--radius-sm);
+      font-size: .92rem; font-weight: 600;
+      transition: all .2s; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--primary); color: var(--white); }
+    .btn-primary:hover { background: var(--primary-dk); }
+    .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent; color: var(--mid);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+    .step-nav {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-top: 36px; padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .82rem; color: var(--mid); cursor: pointer;
+      background: none; border: none;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    /* ── Step 2: Layout ── */
+    .s2-layout { display: flex; gap: 24px; align-items: flex-start; }
+
+    /* Filter sidebar */
+    .filter-sidebar {
+      width: 210px; flex-shrink: 0;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 18px;
+      position: sticky; top: 80px;
+    }
+    .filter-search {
+      width: 100%; height: 38px;
+      padding: 0 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .84rem; color: var(--dark);
+      background: var(--light); outline: none;
+      margin-bottom: 16px;
+    }
+    .filter-search:focus { border-color: var(--primary); background: var(--white); }
+    .filter-group-label {
+      font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--mid); margin-bottom: 8px;
+      padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    }
+    .filter-group { margin-bottom: 18px; }
+    .filter-check {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 0; font-size: .83rem;
+      color: var(--dark); cursor: pointer;
+    }
+    .filter-check input[type=checkbox] {
+      width: 14px; height: 14px;
+      accent-color: var(--primary); cursor: pointer;
+    }
+    .filter-clear {
+      display: block; margin-top: 4px;
+      font-size: .78rem; color: var(--primary);
+      cursor: pointer; text-align: center;
+      background: none; border: none;
+      font-family: inherit;
+    }
+    .filter-clear:hover { text-decoration: underline; }
+
+    /* Product grid */
+    .product-area { flex: 1; min-width: 0; }
+    .grid-meta {
+      font-size: .8rem; color: var(--mid);
+      margin-bottom: 14px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+      gap: 13px;
+    }
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      overflow: hidden;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+    }
+    .product-card:hover {
+      border-color: rgba(200,134,10,.4);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .product-card.sel-floor { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(200,134,10,.18); }
+    .product-card.sel-wall  { border-color: var(--accent);  box-shadow: 0 0 0 3px rgba(74,124,111,.18); }
+
+    .card-swatch { height: 86px; position: relative; }
+    .card-swatch-bg { position: absolute; inset: 0; }
+    .card-badges {
+      position: absolute; top: 7px; left: 7px;
+      display: flex; gap: 4px; flex-wrap: wrap;
+    }
+    .badge {
+      font-size: .62rem; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 20px;
+    }
+    .badge-best { background: var(--dark); color: white; }
+    .badge-new  { background: var(--primary); color: white; }
+    .badge-usa  { background: rgba(255,255,255,.9); color: var(--dark); border: 1px solid rgba(0,0,0,.1); }
+
+    .card-body { padding: 11px 12px; }
+    .card-name   { font-size: .83rem; font-weight: 600; line-height: 1.3; margin-bottom: 2px; }
+    .card-series { font-size: .72rem; color: var(--mid); margin-bottom: 7px; }
+    .card-tags   { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 7px; }
+    .card-tag {
+      font-size: .66rem; padding: 2px 7px;
+      background: var(--light); color: var(--mid);
+      border-radius: 20px; border: 1px solid var(--border);
+    }
+    .card-price { font-size: .84rem; color: var(--primary); font-weight: 700; margin-bottom: 9px; }
+    .card-price span { font-size: .7rem; font-weight: 400; color: var(--mid); }
+
+    .card-actions { display: flex; flex-direction: column; gap: 5px; }
+    .sel-btn {
+      width: 100%; padding: 7px 8px;
+      border-radius: var(--radius-sm);
+      font-size: .76rem; font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--white); color: var(--dark);
+      cursor: pointer; transition: all .18s; text-align: center;
+    }
+    .sel-btn:hover   { border-color: var(--primary); color: var(--primary); }
+    .sel-btn.on-floor { background: var(--primary); border-color: var(--primary); color: white; }
+    .sel-btn.on-wall  { background: var(--accent);  border-color: var(--accent);  color: white; }
+
+    /* No results */
+    .no-results { text-align: center; padding: 60px 20px; color: var(--mid); }
+    .no-results p { margin-top: 8px; font-size: .88rem; }
+
+    /* Running total sticky bar */
+    .running-bar {
+      position: sticky; bottom: 0;
+      background: var(--dark); color: white;
+      padding: 14px 20px;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 16px; margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .running-selections { display: flex; gap: 18px; flex-wrap: wrap; }
+    .running-item { display: flex; align-items: center; gap: 8px; }
+    .running-swatch {
+      width: 18px; height: 18px;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,.2);
+      flex-shrink: 0;
+    }
+    .running-label { font-size: .8rem; color: rgba(255,255,255,.65); }
+    .running-label strong { color: white; display: block; font-size: .86rem; }
+    .running-empty { font-size: .84rem; color: rgba(255,255,255,.45); font-style: italic; }
+    .running-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .running-cost { text-align: right; }
+    .running-cost .amount {
+      font-family: var(--font-display);
+      font-size: 1.35rem; color: var(--primary);
+    }
+    .running-cost .lbl { font-size: .7rem; color: rgba(255,255,255,.45); }
+
+    /* ── Step 3: Quote layout ── */
+    .s3-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 28px; align-items: flex-start;
+    }
+
+    /* Quote card */
+    .quote-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .quote-card-head {
+      background: var(--dark); color: white;
+      padding: 20px 24px;
+    }
+    .quote-card-head h3 {
+      font-family: var(--font-display); font-size: 1.25rem;
+    }
+    .quote-card-head p { font-size: .8rem; color: rgba(255,255,255,.55); margin-top: 3px; }
+
+    .q-section { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+    .q-section:last-child { border-bottom: none; }
+    .q-section-label {
+      font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--mid); margin-bottom: 12px;
+    }
+
+    .q-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline; gap: 12px;
+      padding: 6px 0; font-size: .87rem;
+      border-bottom: 1px solid var(--light);
+    }
+    .q-row:last-child { border-bottom: none; }
+    .q-row-lbl { color: var(--mid); }
+    .q-row-val { font-weight: 600; text-align: right; }
+
+    .q-tile-line {
+      display: flex; align-items: flex-start;
+      gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid var(--light);
+    }
+    .q-tile-line:last-child { border-bottom: none; }
+    .q-tile-swatch {
+      width: 38px; height: 38px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0; border: 1px solid var(--border);
+    }
+    .q-tile-info { flex: 1; min-width: 0; }
+    .q-tile-name { font-size: .87rem; font-weight: 600; }
+    .q-tile-detail { font-size: .76rem; color: var(--mid); margin-top: 2px; }
+    .q-tile-cost { font-size: .9rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
+
+    .q-totals { background: var(--light); padding: 18px 24px; }
+    .q-total-row {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 5px 0; font-size: .88rem;
+    }
+    .q-total-row .lbl { color: var(--mid); }
+    .q-total-row .val { font-weight: 600; }
+    .q-total-row.grand {
+      border-top: 2px solid var(--border);
+      margin-top: 8px; padding-top: 14px;
+      font-size: 1rem;
+    }
+    .q-total-row.grand .val {
+      font-family: var(--font-display);
+      font-size: 1.5rem; color: var(--primary);
+    }
+    .q-disclaimer {
+      padding: 12px 24px;
+      font-size: .75rem; color: var(--mid);
+      font-style: italic;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Request form card */
+    .req-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: sticky; top: 80px;
+    }
+    .req-card-head {
+      background: var(--primary); color: white;
+      padding: 20px 24px;
+    }
+    .req-card-head h3 { font-family: var(--font-display); font-size: 1.15rem; }
+    .req-card-head p  { font-size: .8rem; color: rgba(255,255,255,.8); margin-top: 4px; }
+    .req-card-body { padding: 22px 24px; }
+
+    .req-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .req-group label { font-size: .81rem; font-weight: 600; }
+    .req-group input,
+    .req-group textarea {
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .9rem; color: var(--dark);
+      background: var(--white); outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .req-group input:focus,
+    .req-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(200,134,10,.12);
+    }
+    .req-group textarea { resize: vertical; min-height: 78px; }
+
+    .req-submit {
+      width: 100%; padding: 14px;
+      background: var(--primary); color: white;
+      border: none; border-radius: var(--radius-sm);
+      font-size: .95rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: background .2s;
+    }
+    .req-submit:hover { background: var(--primary-dk); }
+    .form-note { font-size: .73rem; color: var(--mid); text-align: center; margin-top: 9px; }
+
+    .success-msg { display: none; text-align: center; padding: 32px 20px; }
+    .success-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .success-msg h4 { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 7px; }
+    .success-msg p  { font-size: .87rem; color: var(--mid); line-height: 1.6; }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .s3-layout { grid-template-columns: 1fr; }
+      .req-card  { position: static; }
+    }
+    @media (max-width: 700px) {
+      .s2-layout { flex-direction: column; }
+      .filter-sidebar { width: 100%; position: static; }
+      .option-row { gap: 7px; }
+    }
+    @media (max-width: 520px) {
+      .step-tab  { padding: 13px 8px; gap: 7px; font-size: .78rem; }
+      .step-label { display: none; }
+      .step-connector { width: 14px; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .running-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<header class="nav">
+  <a href="/" class="nav__back">
+    ← Precision Tile Co.
+  </a>
+  <div class="nav__logo">
+    <span class="nav__logo-icon">◈</span>
+    Precision Tile Co.
+  </div>
+  <span class="nav__badge">Quote Builder</span>
+</header>
+
+<!-- ── STEPPER ── -->
+<div class="stepper-wrap">
+  <div class="stepper">
+    <div class="step-tab active" id="tab-1">
+      <div class="step-num">1</div>
+      <span class="step-label">Room Setup</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-tab" id="tab-2">
+      <div class="step-num">2</div>
+      <span class="step-label">Select Tiles</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-tab" id="tab-3">
+      <div class="step-num">3</div>
+      <span class="step-label">Your Quote</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- STEP 1 — ROOM SETUP                                              -->
+<!-- ================================================================ -->
+<section class="step-panel active" id="step-1">
+  <div class="container">
+    <p class="step-eyebrow">Step 1 of 3</p>
+    <h2 class="step-title">Tell us about your room</h2>
+    <p class="step-sub">We'll use your dimensions to calculate exactly how much tile you need — waste buffer included.</p>
+
+    <!-- Room name -->
+    <div style="max-width:480px; margin-bottom:24px;">
+      <div class="form-group">
+        <label for="roomName">Room name <span style="font-weight:400;color:var(--mid);">(optional)</span></label>
+        <input type="text" id="roomName" placeholder="e.g. Master Bathroom" maxlength="60"/>
+      </div>
+    </div>
+
+    <!-- Dimensions -->
+    <div style="max-width:440px; margin-bottom:28px;">
+      <div class="form-group">
+        <label>Room dimensions</label>
+        <div class="dim-row">
+          <input type="number" id="roomLength" min="1" max="999" step="0.5" placeholder="Length (ft)"/>
+          <span class="dim-sep">×</span>
+          <input type="number" id="roomWidth"  min="1" max="999" step="0.5" placeholder="Width (ft)"/>
+        </div>
+        <div class="sqft-display">
+          <span class="val" id="sqftDisplay">—</span>
+          <span class="lbl">sq ft</span>
+        </div>
+        <span class="hint">Enter the full room area — we'll account for waste automatically.</span>
+      </div>
+    </div>
+
+    <!-- Waste factor -->
+    <div style="max-width:400px; margin-bottom:28px;">
+      <div class="form-group">
+        <label>Waste factor</label>
+        <div class="option-row" id="wasteOptions">
+          <button class="opt-btn" data-waste="0.10">10%<small>Simple layouts</small></button>
+          <button class="opt-btn active" data-waste="0.15">15%<small>Recommended</small></button>
+          <button class="opt-btn" data-waste="0.20">20%<small>Complex / diagonal</small></button>
+        </div>
+        <span class="hint">Buffer for cuts, breakage, and future repairs.</span>
+      </div>
+    </div>
+
+    <!-- Project type -->
+    <div style="max-width:400px; margin-bottom:40px;">
+      <div class="form-group">
+        <label>What surface are you tiling?</label>
+        <div class="option-row" id="typeOptions">
+          <button class="opt-btn type-btn active" data-type="Floor">
+            <span class="type-icon">🏠</span>Floor
+          </button>
+          <button class="opt-btn type-btn" data-type="Wall">
+            <span class="type-icon">🪟</span>Wall
+          </button>
+          <button class="opt-btn type-btn" data-type="Both">
+            <span class="type-icon">🛁</span>Floor + Wall
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end;">
+      <button class="btn btn-primary" onclick="goToStep2()">
+        Next: Select Tiles →
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- STEP 2 — PRODUCT SELECTION                                       -->
+<!-- ================================================================ -->
+<section class="step-panel" id="step-2">
+  <div class="container">
+    <p class="step-eyebrow">Step 2 of 3</p>
+    <h2 class="step-title">Choose your tile</h2>
+    <p class="step-sub" id="s2Sub">Browse and select a tile for each surface.</p>
+
+    <div class="s2-layout">
+
+      <!-- Filter sidebar -->
+      <aside class="filter-sidebar">
+        <input type="text" class="filter-search" id="searchInput" placeholder="Search tiles…" oninput="applyFilters()"/>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Category</div>
+          <div id="filterCategory"></div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-group-label">Material</div>
+          <div id="filterMaterial"></div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-group-label">Finish</div>
+          <div id="filterFinish"></div>
+        </div>
+
+        <button class="filter-clear" onclick="clearFilters()">Clear all filters</button>
+      </aside>
+
+      <!-- Product area -->
+      <div class="product-area">
+        <div class="grid-meta" id="gridMeta"></div>
+        <div class="product-grid" id="productGrid"></div>
+        <div class="no-results" id="noResults" style="display:none;">
+          <strong>No tiles match your filters</strong>
+          <p>Try adjusting the search or clearing filters.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Running total bar -->
+    <div class="running-bar">
+      <div class="running-selections" id="runningSelections">
+        <span class="running-empty">No tiles selected yet</span>
+      </div>
+      <div class="running-right">
+        <div class="running-cost">
+          <div class="amount" id="runningAmount">—</div>
+          <div class="lbl">Material estimate</div>
+        </div>
+        <button class="btn btn-primary" id="nextBtn" onclick="goToStep3()" disabled>
+          See My Quote →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- STEP 3 — QUOTE SUMMARY                                           -->
+<!-- ================================================================ -->
+<section class="step-panel" id="step-3">
+  <div class="container">
+    <button class="back-link" onclick="goToStep(2)" style="margin-bottom:20px;">
+      ← Back to tile selection
+    </button>
+
+    <p class="step-eyebrow">Step 3 of 3</p>
+    <h2 class="step-title">Your quote estimate</h2>
+    <p class="step-sub">Fill in your details below and we'll confirm the final price within one business day.</p>
+
+    <div class="s3-layout">
+
+      <!-- LEFT: Quote summary -->
+      <div>
+        <div class="quote-card">
+          <div class="quote-card-head">
+            <h3 id="qTitle">Quote Summary</h3>
+            <p  id="qMeta"></p>
+          </div>
+          <div class="q-section">
+            <div class="q-section-label">Room Details</div>
+            <div id="qRoomRows"></div>
+          </div>
+          <div class="q-section">
+            <div class="q-section-label">Selected Tile(s)</div>
+            <div id="qTileLines"></div>
+          </div>
+          <div class="q-totals" id="qTotals"></div>
+          <p class="q-disclaimer">
+            This is a preliminary estimate based on list prices and a standard labor rate.
+            Final pricing is confirmed after a free on-site visit. Actual costs may vary
+            based on surface prep, pattern complexity, and site conditions.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Request form -->
+      <div>
+        <div class="req-card">
+          <div class="req-card-head">
+            <h3>Request This Quote</h3>
+            <p>We'll review and confirm within one business day.</p>
+          </div>
+          <div class="req-card-body">
+            <form id="reqForm" onsubmit="submitQuote(event)">
+              <div class="req-group">
+                <label for="reqName">Your name *</label>
+                <input type="text" id="reqName" placeholder="John Smith" required/>
+              </div>
+              <div class="req-group">
+                <label for="reqEmail">Email *</label>
+                <input type="email" id="reqEmail" placeholder="john@example.com" required/>
+              </div>
+              <div class="req-group">
+                <label for="reqPhone">Phone</label>
+                <input type="tel" id="reqPhone" placeholder="(318) 555-0000"/>
+              </div>
+              <div class="req-group">
+                <label for="reqMsg">Additional notes</label>
+                <textarea id="reqMsg" placeholder="Timeline, special requirements, questions…"></textarea>
+              </div>
+              <button type="submit" class="req-submit">Send Quote Request →</button>
+              <p class="form-note">Your info is never shared. We respond within 1 business day.</p>
+            </form>
+            <div class="success-msg" id="successMsg">
+              <div class="success-icon">✓</div>
+              <h4>Quote request sent!</h4>
+              <p>We'll review your estimate and reach out within one business day to confirm pricing and schedule a free site visit.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- JAVASCRIPT                                                        -->
+<!-- ================================================================ -->
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────
+const CONFIG = {
+  laborPerSqft:  8,
+  wasteOptions:  [0.10, 0.15, 0.20],
+  contactEmail:  "marcus@precisiontileco.com"
+};
+
+// ── STATE ───────────────────────────────────────────────────────────
+const state = {
+  roomName:     'My Room',
+  sqft:         0,
+  wasteFactor:  0.15,
+  projectType:  'Floor',
+  floorProduct: null,
+  wallProduct:  null,
+};
+
+let allProducts = [];
+
+// ── INIT ────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Live sqft calculation
+  document.getElementById('roomLength').addEventListener('input', updateSqft);
+  document.getElementById('roomWidth').addEventListener('input',  updateSqft);
+
+  // Waste buttons
+  document.querySelectorAll('#wasteOptions .opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#wasteOptions .opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.wasteFactor = parseFloat(btn.dataset.waste);
+    });
+  });
+
+  // Project type buttons
+  document.querySelectorAll('#typeOptions .opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#typeOptions .opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.projectType = btn.dataset.type;
+    });
+  });
+
+  // Pre-fill from URL params (e.g. ?sku=0W0011P31&surface=floor)
+  const params = new URLSearchParams(location.search);
+  if (params.get('room')) {
+    document.getElementById('roomName').value = decodeURIComponent(params.get('room'));
+  }
+
+  // Load products
+  fetch('daltile-catalog/products.json')
+    .then(r => r.json())
+    .then(data => {
+      allProducts = data;
+      buildFilters(data);
+      renderGrid(data);
+
+      // Pre-select tile from URL
+      const sku     = params.get('sku');
+      const surface = params.get('surface') || 'floor';
+      if (sku) {
+        const p = data.find(x => x.sku === sku);
+        if (p) {
+          if (surface === 'wall') state.wallProduct  = p;
+          else                    state.floorProduct = p;
+          renderGrid(filtered());
+          updateRunningBar();
+        }
+      }
+    })
+    .catch(() => {
+      document.getElementById('productGrid').innerHTML =
+        '<p style="color:var(--mid);padding:20px 0;">Could not load products — please try refreshing.</p>';
+    });
+});
+
+// ── STEP NAVIGATION ─────────────────────────────────────────────────
+function goToStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.classList.remove('active', 'done');
+    if (i + 1 < n) t.classList.add('done');
+    if (i + 1 === n) t.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToStep2() {
+  state.roomName   = document.getElementById('roomName').value.trim() || 'My Room';
+  state.sqft       = rawSqft();
+
+  if (state.sqft <= 0) {
+    alert('Please enter your room dimensions before continuing.');
+    return;
+  }
+
+  const adj = adjusted();
+  document.getElementById('s2Sub').textContent =
+    state.projectType === 'Both'
+      ? `Select one tile for the floor and one for the wall. Total tile needed: ${adj} sq ft (with ${pct()}% waste).`
+      : `Select your ${state.projectType.toLowerCase()} tile. Total tile needed: ${adj} sq ft (with ${pct()}% waste).`;
+
+  goToStep(2);
+}
+
+function goToStep3() {
+  const needFloor = needsSurface('floor');
+  const needWall  = needsSurface('wall');
+
+  if (needFloor && !state.floorProduct) { alert('Please select a floor tile.'); return; }
+  if (needWall  && !state.wallProduct)  { alert('Please select a wall tile.');  return; }
+
+  buildQuoteSummary();
+  goToStep(3);
+}
+
+// ── STEP 1 HELPERS ──────────────────────────────────────────────────
+function rawSqft()  { return (parseFloat(document.getElementById('roomLength').value) || 0) * (parseFloat(document.getElementById('roomWidth').value) || 0); }
+function adjusted() { return Math.ceil(state.sqft * (1 + state.wasteFactor)); }
+function pct()      { return Math.round(state.wasteFactor * 100); }
+function needsSurface(s) {
+  if (s === 'floor') return state.projectType === 'Floor' || state.projectType === 'Both';
+  if (s === 'wall')  return state.projectType === 'Wall'  || state.projectType === 'Both';
+  return false;
+}
+
+function updateSqft() {
+  const sq = rawSqft();
+  document.getElementById('sqftDisplay').textContent = sq > 0 ? sq.toFixed(1) : '—';
+}
+
+// ── STEP 2: FILTERS ─────────────────────────────────────────────────
+function buildFilters(products) {
+  const uniq = (key) => [...new Set(products.map(p => p[key]))].sort();
+  renderCheckboxes('filterCategory', uniq('category'), 'cat');
+  renderCheckboxes('filterMaterial', uniq('material'), 'mat');
+  renderCheckboxes('filterFinish',   uniq('finish'),   'fin');
+}
+
+function renderCheckboxes(containerId, values, name) {
+  document.getElementById(containerId).innerHTML = values.map(v => `
+    <label class="filter-check">
+      <input type="checkbox" name="${name}" value="${v}" onchange="applyFilters()"/> ${v}
+    </label>`).join('');
+}
+
+function checked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
+}
+
+function filtered() {
+  const q    = (document.getElementById('searchInput').value || '').toLowerCase();
+  const cats = checked('cat');
+  const mats = checked('mat');
+  const fins = checked('fin');
+
+  return allProducts.filter(p => {
+    if (cats.length && !cats.includes(p.category)) return false;
+    if (mats.length && !mats.includes(p.material)) return false;
+    if (fins.length && !fins.includes(p.finish))   return false;
+    if (q && ![p.name, p.series, p.material, p.finish, p.size].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function applyFilters() { renderGrid(filtered()); }
+
+function clearFilters() {
+  document.querySelectorAll('#filterCategory input, #filterMaterial input, #filterFinish input')
+    .forEach(cb => cb.checked = false);
+  document.getElementById('searchInput').value = '';
+  renderGrid(allProducts);
+}
+
+// ── STEP 2: PRODUCT GRID ────────────────────────────────────────────
+function renderGrid(products) {
+  const grid = document.getElementById('productGrid');
+  const none = document.getElementById('noResults');
+  const meta = document.getElementById('gridMeta');
+
+  if (!products.length) {
+    grid.innerHTML = '';
+    none.style.display = 'block';
+    meta.textContent = '';
+    return;
+  }
+  none.style.display = 'none';
+  meta.textContent = `${products.length} tile${products.length !== 1 ? 's' : ''} found`;
+
+  grid.innerHTML = products.map(p => {
+    const isFloor = state.floorProduct?.id === p.id;
+    const isWall  = state.wallProduct?.id  === p.id;
+    const cardCls = isFloor ? 'sel-floor' : isWall ? 'sel-wall' : '';
+    const pat     = tilePattern(p);
+
+    let btns = '';
+    if (needsSurface('floor')) btns += `
+      <button class="sel-btn ${isFloor ? 'on-floor' : ''}"
+        onclick="selectTile(event,'${p.id}','floor')">
+        ${isFloor ? '✓ Floor Selected' : 'Select for Floor'}
+      </button>`;
+    if (needsSurface('wall')) btns += `
+      <button class="sel-btn ${isWall ? 'on-wall' : ''}"
+        onclick="selectTile(event,'${p.id}','wall')">
+        ${isWall ? '✓ Wall Selected' : 'Select for Wall'}
+      </button>`;
+
+    return `
+      <div class="product-card ${cardCls}" id="card-${p.id}">
+        <div class="card-swatch">
+          <div class="card-swatch-bg" style="${pat}"></div>
+          <div class="card-badges">
+            ${p.bestseller  ? '<span class="badge badge-best">Best Seller</span>' : ''}
+            ${p.new         ? '<span class="badge badge-new">New</span>'          : ''}
+            ${p.made_in_usa ? '<span class="badge badge-usa">🇺🇸 USA</span>'       : ''}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${p.name}</div>
+          <div class="card-series">${p.series}</div>
+          <div class="card-tags">
+            <span class="card-tag">${p.size}</span>
+            <span class="card-tag">${p.finish}</span>
+          </div>
+          <div class="card-price">$${p.price.toFixed(2)} <span>/ sq ft</span></div>
+          <div class="card-actions">${btns}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── TILE PATTERN CSS ─────────────────────────────────────────────────
+function tilePattern(tile) {
+  const c1    = tile.color;
+  const c2    = tile.color2 || tile.color;
+  const light = isLight(c1);
+  const grout = light ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.15)';
+
+  // Map tile size → pixel cell dimensions for the repeating pattern
+  let tw = 44, th = 44;
+  const m = tile.size.match(/(\d+).*?(\d+)/);
+  if (m) {
+    const [, ws, hs] = m;
+    const w = parseInt(ws), h = parseInt(hs);
+    if (w <= 2)                         { tw = 16;  th = 16;  } // mosaic
+    else if (w === 3 && h === 6)        { tw = 26;  th = 52;  } // 3×6 subway
+    else if (w === 4 && h === 4)        { tw = 36;  th = 36;  } // 4×4
+    else if (w === 4 && h === 12)       { tw = 28;  th = 84;  } // 4×12
+    else if (w === 6)                   { tw = 44;  th = 44;  } // 6×6
+    else if (w === 12)                  { tw = 56;  th = 56;  } // 12×12
+    else if (w >= 18 && w < 24)         { tw = 64;  th = 64;  } // 18×18
+    else if (w >= 24)                   { tw = 80;  th = 80;  } // 24×24+
+  }
+
+  return [
+    `background:`,
+    `  linear-gradient(to right,  ${grout} 2px, transparent 2px),`,
+    `  linear-gradient(to bottom, ${grout} 2px, transparent 2px),`,
+    `  linear-gradient(135deg, ${c1} 0%, ${c2} 100%);`,
+    `background-size: ${tw}px ${th}px;`,
+  ].join('\n');
+}
+
+function isLight(hex) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 140;
+}
+
+// ── TILE SELECTION ───────────────────────────────────────────────────
+function selectTile(e, id, surface) {
+  e.stopPropagation();
+  const product = allProducts.find(p => p.id === id);
+  if (!product) return;
+  if (surface === 'floor') state.floorProduct = product;
+  if (surface === 'wall')  state.wallProduct  = product;
+  renderGrid(filtered());
+  updateRunningBar();
+}
+
+// ── MATERIAL COST HELPER ─────────────────────────────────────────────
+function materialCost(product) {
+  const cov   = parseFloat(product.coverage);   // sq ft / case
+  const cases = Math.ceil(adjusted() / cov);
+  return cases * cov * product.price;
+}
+
+// ── RUNNING BAR (step 2) ─────────────────────────────────────────────
+function updateRunningBar() {
+  const selEl = document.getElementById('runningSelections');
+  const amtEl = document.getElementById('runningAmount');
+  const btn   = document.getElementById('nextBtn');
+
+  const needFloor = needsSurface('floor');
+  const needWall  = needsSurface('wall');
+  let total = 0, ready = true, html = '';
+
+  if (needFloor) {
+    if (state.floorProduct) {
+      const c = materialCost(state.floorProduct);
+      total += c;
+      html += runningItem(state.floorProduct, 'Floor', c);
+    } else {
+      ready = false;
+      html += runningMissing('Floor tile');
+    }
+  }
+  if (needWall) {
+    if (state.wallProduct) {
+      const c = materialCost(state.wallProduct);
+      total += c;
+      html += runningItem(state.wallProduct, 'Wall', c);
+    } else {
+      ready = false;
+      html += runningMissing('Wall tile');
+    }
+  }
+
+  selEl.innerHTML = html || '<span class="running-empty">No tiles selected yet</span>';
+  amtEl.textContent = total > 0 ? '$' + total.toFixed(2) : '—';
+  btn.disabled = !ready;
+  btn.style.opacity = ready ? '1' : '0.45';
+}
+
+function runningItem(p, label, cost) {
+  return `<div class="running-item">
+    <div class="running-swatch" style="background:${p.color}"></div>
+    <div class="running-label">
+      <strong>${label}: ${trunc(p.name, 26)}</strong>
+      $${cost.toFixed(2)} material
+    </div>
+  </div>`;
+}
+function runningMissing(label) {
+  return `<div class="running-item">
+    <div class="running-swatch" style="background:rgba(255,255,255,.15)"></div>
+    <div class="running-label" style="color:rgba(255,255,255,.38);">${label} not selected</div>
+  </div>`;
+}
+
+// ── STEP 3: QUOTE SUMMARY ────────────────────────────────────────────
+function buildQuoteSummary() {
+  const adj = adjusted();
+
+  document.getElementById('qTitle').textContent = `Quote for ${state.roomName}`;
+  document.getElementById('qMeta').textContent  =
+    `${state.sqft.toFixed(0)} sq ft · ${pct()}% waste · ${state.projectType}`;
+
+  // Room detail rows
+  document.getElementById('qRoomRows').innerHTML = [
+    qRow('Room',               state.roomName),
+    qRow('Base area',          `${state.sqft.toFixed(1)} sq ft`),
+    qRow('Waste factor',       `${pct()}%`),
+    qRow('Total tile needed',  `${adj} sq ft`),
+    qRow('Surface(s)',         state.projectType),
+  ].join('');
+
+  // Tile lines
+  const surfaces = [];
+  if (state.floorProduct) surfaces.push({ label: 'Floor', p: state.floorProduct });
+  if (state.wallProduct)  surfaces.push({ label: 'Wall',  p: state.wallProduct  });
+
+  let totalMat = 0;
+  document.getElementById('qTileLines').innerHTML = surfaces.map(({ label, p }) => {
+    const cov   = parseFloat(p.coverage);
+    const cases = Math.ceil(adj / cov);
+    const cost  = cases * cov * p.price;
+    totalMat   += cost;
+    return `
+      <div class="q-tile-line">
+        <div class="q-tile-swatch" style="${tilePattern(p)}"></div>
+        <div class="q-tile-info">
+          <div class="q-tile-name">${label}: ${p.name}</div>
+          <div class="q-tile-detail">SKU ${p.sku} · ${p.size} · ${cases} cases × $${(cov * p.price).toFixed(2)}/case</div>
+        </div>
+        <div class="q-tile-cost">$${cost.toFixed(2)}</div>
+      </div>`;
+  }).join('');
+
+  const labor = state.sqft * CONFIG.laborPerSqft;
+  const total = totalMat + labor;
+
+  document.getElementById('qTotals').innerHTML = `
+    <div class="q-total-row"><span class="lbl">Material cost</span><span class="val">$${totalMat.toFixed(2)}</span></div>
+    <div class="q-total-row"><span class="lbl">Labor estimate ($${CONFIG.laborPerSqft}/sq ft)</span><span class="val">$${labor.toFixed(2)}</span></div>
+    <div class="q-total-row grand"><span class="lbl">Estimated Total</span><span class="val">$${total.toFixed(2)}</span></div>`;
+
+  // Store for mailto
+  window._quoteText = buildMailBody(surfaces, adj, totalMat, labor, total);
+}
+
+function qRow(label, val) {
+  return `<div class="q-row"><span class="q-row-lbl">${label}</span><span class="q-row-val">${val}</span></div>`;
+}
+
+// ── MAILTO BODY ──────────────────────────────────────────────────────
+function buildMailBody(surfaces, adj, matCost, labor, total) {
+  const lines = [
+    `QUOTE REQUEST — Precision Tile Co.`,
+    ``,
+    `Room: ${state.roomName}`,
+    `Area: ${state.sqft.toFixed(1)} sq ft  (${adj} sq ft with ${pct()}% waste)`,
+    `Surface: ${state.projectType}`,
+    ``,
+    `TILE SELECTION:`,
+    ...surfaces.map(({ label, p }) => {
+      const cov   = parseFloat(p.coverage);
+      const cases = Math.ceil(adj / cov);
+      return `  ${label}: ${p.name} (SKU: ${p.sku}, ${p.size}) — ${cases} cases @ $${(cov * p.price).toFixed(2)}/case`;
+    }),
+    ``,
+    `COST ESTIMATE:`,
+    `  Material:  $${matCost.toFixed(2)}`,
+    `  Labor ($${CONFIG.laborPerSqft}/sq ft):  $${labor.toFixed(2)}`,
+    `  TOTAL:  $${total.toFixed(2)}`,
+    ``,
+    `Note: Preliminary estimate — final price confirmed after on-site visit.`,
+  ];
+  return lines.join('\n');
+}
+
+// ── FORM SUBMIT ──────────────────────────────────────────────────────
+function submitQuote(e) {
+  e.preventDefault();
+  const name  = document.getElementById('reqName').value.trim();
+  const email = document.getElementById('reqEmail').value.trim();
+  const phone = document.getElementById('reqPhone').value.trim();
+  const msg   = document.getElementById('reqMsg').value.trim();
+
+  const subject = encodeURIComponent(`Quote Request: ${state.roomName}`);
+  const body    = encodeURIComponent(
+    (window._quoteText || '') +
+    (msg   ? `\n\nCUSTOMER NOTES:\n${msg}` : '') +
+    `\n\nCONTACT:\nName: ${name}\nEmail: ${email}` +
+    (phone ? `\nPhone: ${phone}` : '')
+  );
+
+  window.location.href = `mailto:${CONFIG.contactEmail}?subject=${subject}&body=${body}`;
+
+  document.getElementById('reqForm').style.display  = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────
+function trunc(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
+</script>
+</body>
+</html>

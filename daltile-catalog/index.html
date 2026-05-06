@@ -177,6 +177,15 @@
   .price-unit { font-size: .72rem; font-weight: 400; color: var(--text-muted); }
   .stars { color: #f4b400; font-size: .82rem; letter-spacing: .5px; }
   .review-count { font-size: .7rem; color: var(--text-muted); }
+  .card-cta { padding: 0 12px 12px; }
+  .card-quote-link {
+    display: block; width: 100%; text-align: center;
+    padding: 7px 10px; border-radius: 6px;
+    font-size: .78rem; font-weight: 600;
+    color: var(--gold); border: 1.5px solid var(--gold);
+    background: transparent; transition: all .15s;
+  }
+  .card-quote-link:hover { background: var(--gold); color: var(--brand); }
 
   /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 80px 20px; color: var(--text-muted); }
@@ -225,11 +234,20 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 20px 32px; border-top: 1px solid var(--border);
     background: var(--bg); border-radius: 0 0 14px 14px;
+    flex-wrap: wrap; gap: 14px;
   }
   .modal-price { font-size: 1.5rem; font-weight: 700; }
   .modal-price small { font-size: .85rem; font-weight: 400; color: var(--text-muted); }
   .modal-rating { display: flex; align-items: center; gap: 8px; }
   .modal-stars { color: #f4b400; font-size: 1rem; }
+  .modal-quote-cta {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 22px; border-radius: 8px;
+    background: var(--accent); color: #fff;
+    font-size: .9rem; font-weight: 700;
+    transition: opacity .15s;
+  }
+  .modal-quote-cta:hover { opacity: .88; }
   .modal-close {
     position: absolute; top: 14px; right: 14px;
     width: 36px; height: 36px; border-radius: 50%;
@@ -357,6 +375,7 @@
           <div class="modal-stars" id="modal-stars"></div>
           <div style="font-size:.82rem;color:var(--text-muted)" id="modal-reviews"></div>
         </div>
+        <a href="#" id="modal-quote-btn" class="modal-quote-cta">Get a Quote →</a>
       </div>
     </div>
   </div>
@@ -569,6 +588,9 @@ function makeCard(p) {
           <div class="review-count">${p.reviews.toLocaleString()} reviews</div>
         </div>
       </div>
+    </div>
+    <div class="card-cta">
+      <a href="../quote.html?sku=${p.sku}" class="card-quote-link" onclick="event.stopPropagation()">Get a Quote →</a>
     </div>`;
 
   // Build swatch tiles after insert
@@ -623,6 +645,7 @@ function openModal(p) {
   document.getElementById('modal-apps').innerHTML =
     p.applications.map(a => `<span class="app-tag">${a}</span>`).join('');
 
+  document.getElementById('modal-quote-btn').href = `../quote.html?sku=${p.sku}`;
   document.getElementById('modal-backdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
