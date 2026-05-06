@@ -605,20 +605,36 @@
       </div>
     </div>
 
-    <!-- Dimensions -->
-    <div style="max-width:440px; margin-bottom:28px;">
+    <!-- Floor dimensions -->
+    <div id="floorDimsSection" style="max-width:440px; margin-bottom:24px;">
       <div class="form-group">
-        <label>Room dimensions</label>
+        <label>Floor dimensions</label>
         <div class="dim-row">
-          <input type="number" id="roomLength" min="1" max="999" step="0.5" placeholder="Length (ft)"/>
+          <input type="number" id="floorLength" min="1" max="999" step="0.5" placeholder="Length (ft)" oninput="updateSqft()"/>
           <span class="dim-sep">×</span>
-          <input type="number" id="roomWidth"  min="1" max="999" step="0.5" placeholder="Width (ft)"/>
+          <input type="number" id="floorWidth"  min="1" max="999" step="0.5" placeholder="Width (ft)"  oninput="updateSqft()"/>
         </div>
         <div class="sqft-display">
-          <span class="val" id="sqftDisplay">—</span>
-          <span class="lbl">sq ft</span>
+          <span class="val" id="floorSqftDisplay">—</span>
+          <span class="lbl">sq ft floor</span>
         </div>
-        <span class="hint">Enter the full room area — we'll account for waste automatically.</span>
+      </div>
+    </div>
+
+    <!-- Wall dimensions -->
+    <div id="wallDimsSection" style="max-width:440px; margin-bottom:24px; display:none;">
+      <div class="form-group">
+        <label>Wall area to tile</label>
+        <div class="dim-row">
+          <input type="number" id="wallLength" min="1" max="9999" step="0.5" placeholder="Total wall length (ft)" oninput="updateSqft()"/>
+          <span class="dim-sep">×</span>
+          <input type="number" id="wallHeight" min="1" max="30"   step="0.5" placeholder="Height (ft)" value="8" oninput="updateSqft()"/>
+        </div>
+        <div class="sqft-display">
+          <span class="val" id="wallSqftDisplay">—</span>
+          <span class="lbl">sq ft wall</span>
+        </div>
+        <span class="hint">For a full room: add up the length of every wall you're tiling, then multiply by ceiling height.</span>
       </div>
     </div>
 
@@ -650,6 +666,7 @@
             <span class="type-icon">🛁</span>Floor + Wall
           </button>
         </div>
+        <span class="hint" style="margin-top:8px;">Wall and floor tiles are priced separately — each gets its own tile selection in the next step.</span>
       </div>
     </div>
 
@@ -816,7 +833,8 @@ const CONFIG = {
 // ── STATE ───────────────────────────────────────────────────────────
 const state = {
   roomName:     'My Room',
-  sqft:         0,
+  floorSqft:    0,
+  wallSqft:     0,
   wasteFactor:  0.15,
   projectType:  'Floor',
   floorProduct: null,
@@ -827,9 +845,8 @@ let allProducts = [];
 
 // ── INIT ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Live sqft calculation
-  document.getElementById('roomLength').addEventListener('input', updateSqft);
-  document.getElementById('roomWidth').addEventListener('input',  updateSqft);
+  // Dimension UI starts in correct state for default type (Floor)
+  // (inputs use oninput=updateSqft() directly, no extra listeners needed)
 
   // Waste buttons
   document.querySelectorAll('#wasteOptions .opt-btn').forEach(btn => {
@@ -846,8 +863,12 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#typeOptions .opt-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.projectType = btn.dataset.type;
+      updateDimensionUI();
     });
   });
+
+  // Show correct dimension inputs for default type
+  updateDimensionUI();
 
   // Pre-fill from URL params (e.g. ?sku=0W0011P31&surface=floor)
   const params = new URLSearchParams(location.search);
@@ -895,19 +916,24 @@ function goToStep(n) {
 }
 
 function goToStep2() {
-  state.roomName   = document.getElementById('roomName').value.trim() || 'My Room';
-  state.sqft       = rawSqft();
+  state.roomName  = document.getElementById('roomName').value.trim() || 'My Room';
+  state.floorSqft = needsSurface('floor') ? rawFloorSqft() : 0;
+  state.wallSqft  = needsSurface('wall')  ? rawWallSqft()  : 0;
 
-  if (state.sqft <= 0) {
-    alert('Please enter your room dimensions before continuing.');
+  if (needsSurface('floor') && state.floorSqft <= 0) {
+    alert('Please enter your floor dimensions before continuing.');
+    return;
+  }
+  if (needsSurface('wall') && state.wallSqft <= 0) {
+    alert('Please enter your wall dimensions before continuing.');
     return;
   }
 
-  const adj = adjusted();
+  const parts = [];
+  if (needsSurface('floor')) parts.push(`floor: ${adjSqft('floor')} sq ft`);
+  if (needsSurface('wall'))  parts.push(`wall: ${adjSqft('wall')} sq ft`);
   document.getElementById('s2Sub').textContent =
-    state.projectType === 'Both'
-      ? `Select one tile for the floor and one for the wall. Total tile needed: ${adj} sq ft (with ${pct()}% waste).`
-      : `Select your ${state.projectType.toLowerCase()} tile. Total tile needed: ${adj} sq ft (with ${pct()}% waste).`;
+    `Select your tile(s). With ${pct()}% waste — ${parts.join(', ')}.`;
 
   goToStep(2);
 }
@@ -924,18 +950,39 @@ function goToStep3() {
 }
 
 // ── STEP 1 HELPERS ──────────────────────────────────────────────────
-function rawSqft()  { return (parseFloat(document.getElementById('roomLength').value) || 0) * (parseFloat(document.getElementById('roomWidth').value) || 0); }
-function adjusted() { return Math.ceil(state.sqft * (1 + state.wasteFactor)); }
-function pct()      { return Math.round(state.wasteFactor * 100); }
+function rawFloorSqft() {
+  return (parseFloat(document.getElementById('floorLength').value) || 0) *
+         (parseFloat(document.getElementById('floorWidth').value)  || 0);
+}
+function rawWallSqft() {
+  return (parseFloat(document.getElementById('wallLength').value) || 0) *
+         (parseFloat(document.getElementById('wallHeight').value)  || 0);
+}
+function adjSqft(surface) {
+  const raw = surface === 'wall' ? state.wallSqft : state.floorSqft;
+  return Math.ceil(raw * (1 + state.wasteFactor));
+}
+function pct() { return Math.round(state.wasteFactor * 100); }
 function needsSurface(s) {
   if (s === 'floor') return state.projectType === 'Floor' || state.projectType === 'Both';
   if (s === 'wall')  return state.projectType === 'Wall'  || state.projectType === 'Both';
   return false;
 }
 
+function updateDimensionUI() {
+  const type = state.projectType;
+  document.getElementById('floorDimsSection').style.display =
+    (type === 'Floor' || type === 'Both') ? 'block' : 'none';
+  document.getElementById('wallDimsSection').style.display =
+    (type === 'Wall' || type === 'Both') ? 'block' : 'none';
+  updateSqft();
+}
+
 function updateSqft() {
-  const sq = rawSqft();
-  document.getElementById('sqftDisplay').textContent = sq > 0 ? sq.toFixed(1) : '—';
+  const fEl = document.getElementById('floorSqftDisplay');
+  const wEl = document.getElementById('wallSqftDisplay');
+  if (fEl) { const f = rawFloorSqft(); fEl.textContent = f > 0 ? f.toFixed(1) : '—'; }
+  if (wEl) { const w = rawWallSqft();  wEl.textContent = w > 0 ? w.toFixed(1) : '—'; }
 }
 
 // ── STEP 2: FILTERS ─────────────────────────────────────────────────
@@ -1089,9 +1136,10 @@ function selectTile(e, id, surface) {
 }
 
 // ── MATERIAL COST HELPER ─────────────────────────────────────────────
-function materialCost(product) {
-  const cov   = parseFloat(product.coverage);   // sq ft / case
-  const cases = Math.ceil(adjusted() / cov);
+function materialCost(product, surface) {
+  const adj   = adjSqft(surface);
+  const cov   = parseFloat(product.coverage);
+  const cases = Math.ceil(adj / cov);
   return cases * cov * product.price;
 }
 
@@ -1107,9 +1155,9 @@ function updateRunningBar() {
 
   if (needFloor) {
     if (state.floorProduct) {
-      const c = materialCost(state.floorProduct);
+      const c = materialCost(state.floorProduct, 'floor');
       total += c;
-      html += runningItem(state.floorProduct, 'Floor', c);
+      html += runningItem(state.floorProduct, `Floor (${adjSqft('floor')} sq ft)`, c);
     } else {
       ready = false;
       html += runningMissing('Floor tile');
@@ -1117,9 +1165,9 @@ function updateRunningBar() {
   }
   if (needWall) {
     if (state.wallProduct) {
-      const c = materialCost(state.wallProduct);
+      const c = materialCost(state.wallProduct, 'wall');
       total += c;
-      html += runningItem(state.wallProduct, 'Wall', c);
+      html += runningItem(state.wallProduct, `Wall (${adjSqft('wall')} sq ft)`, c);
     } else {
       ready = false;
       html += runningMissing('Wall tile');
@@ -1150,28 +1198,35 @@ function runningMissing(label) {
 
 // ── STEP 3: QUOTE SUMMARY ────────────────────────────────────────────
 function buildQuoteSummary() {
-  const adj = adjusted();
-
   document.getElementById('qTitle').textContent = `Quote for ${state.roomName}`;
-  document.getElementById('qMeta').textContent  =
-    `${state.sqft.toFixed(0)} sq ft · ${pct()}% waste · ${state.projectType}`;
+
+  const metaParts = [];
+  if (needsSurface('floor')) metaParts.push(`${state.floorSqft.toFixed(0)} sq ft floor`);
+  if (needsSurface('wall'))  metaParts.push(`${state.wallSqft.toFixed(0)} sq ft wall`);
+  document.getElementById('qMeta').textContent =
+    `${metaParts.join(' + ')} · ${pct()}% waste · ${state.projectType}`;
 
   // Room detail rows
-  document.getElementById('qRoomRows').innerHTML = [
-    qRow('Room',               state.roomName),
-    qRow('Base area',          `${state.sqft.toFixed(1)} sq ft`),
-    qRow('Waste factor',       `${pct()}%`),
-    qRow('Total tile needed',  `${adj} sq ft`),
-    qRow('Surface(s)',         state.projectType),
-  ].join('');
+  const roomRows = [qRow('Room', state.roomName), qRow('Waste factor', `${pct()}%`)];
+  if (needsSurface('floor')) {
+    roomRows.push(qRow('Floor area',          `${state.floorSqft.toFixed(1)} sq ft`));
+    roomRows.push(qRow('Floor tile needed',   `${adjSqft('floor')} sq ft`));
+  }
+  if (needsSurface('wall')) {
+    roomRows.push(qRow('Wall area',           `${state.wallSqft.toFixed(1)} sq ft`));
+    roomRows.push(qRow('Wall tile needed',    `${adjSqft('wall')} sq ft`));
+  }
+  roomRows.push(qRow('Surface(s)', state.projectType));
+  document.getElementById('qRoomRows').innerHTML = roomRows.join('');
 
-  // Tile lines
+  // Tile lines — each uses its own sq ft
   const surfaces = [];
-  if (state.floorProduct) surfaces.push({ label: 'Floor', p: state.floorProduct });
-  if (state.wallProduct)  surfaces.push({ label: 'Wall',  p: state.wallProduct  });
+  if (state.floorProduct) surfaces.push({ label: 'Floor', surface: 'floor', p: state.floorProduct });
+  if (state.wallProduct)  surfaces.push({ label: 'Wall',  surface: 'wall',  p: state.wallProduct  });
 
   let totalMat = 0;
-  document.getElementById('qTileLines').innerHTML = surfaces.map(({ label, p }) => {
+  document.getElementById('qTileLines').innerHTML = surfaces.map(({ label, surface, p }) => {
+    const adj   = adjSqft(surface);
     const cov   = parseFloat(p.coverage);
     const cases = Math.ceil(adj / cov);
     const cost  = cases * cov * p.price;
@@ -1181,22 +1236,22 @@ function buildQuoteSummary() {
         <div class="q-tile-swatch" style="${tilePattern(p)}"></div>
         <div class="q-tile-info">
           <div class="q-tile-name">${label}: ${p.name}</div>
-          <div class="q-tile-detail">SKU ${p.sku} · ${p.size} · ${cases} cases × $${(cov * p.price).toFixed(2)}/case</div>
+          <div class="q-tile-detail">SKU ${p.sku} · ${p.size} · ${adj} sq ft → ${cases} cases × $${(cov * p.price).toFixed(2)}/case</div>
         </div>
         <div class="q-tile-cost">$${cost.toFixed(2)}</div>
       </div>`;
   }).join('');
 
-  const labor = state.sqft * CONFIG.laborPerSqft;
+  const totalInstalledSqft = (state.floorSqft || 0) + (state.wallSqft || 0);
+  const labor = totalInstalledSqft * CONFIG.laborPerSqft;
   const total = totalMat + labor;
 
   document.getElementById('qTotals').innerHTML = `
     <div class="q-total-row"><span class="lbl">Material cost</span><span class="val">$${totalMat.toFixed(2)}</span></div>
-    <div class="q-total-row"><span class="lbl">Labor estimate ($${CONFIG.laborPerSqft}/sq ft)</span><span class="val">$${labor.toFixed(2)}</span></div>
+    <div class="q-total-row"><span class="lbl">Labor estimate ($${CONFIG.laborPerSqft}/sq ft · ${totalInstalledSqft.toFixed(0)} sq ft)</span><span class="val">$${labor.toFixed(2)}</span></div>
     <div class="q-total-row grand"><span class="lbl">Estimated Total</span><span class="val">$${total.toFixed(2)}</span></div>`;
 
-  // Store for mailto
-  window._quoteText = buildMailBody(surfaces, adj, totalMat, labor, total);
+  window._quoteText = buildMailBody(surfaces, totalMat, labor, total);
 }
 
 function qRow(label, val) {
@@ -1204,16 +1259,22 @@ function qRow(label, val) {
 }
 
 // ── MAILTO BODY ──────────────────────────────────────────────────────
-function buildMailBody(surfaces, adj, matCost, labor, total) {
+function buildMailBody(surfaces, matCost, labor, total) {
+  const areaLines = [];
+  if (needsSurface('floor')) areaLines.push(`  Floor: ${state.floorSqft.toFixed(1)} sq ft base (${adjSqft('floor')} sq ft with waste)`);
+  if (needsSurface('wall'))  areaLines.push(`  Wall:  ${state.wallSqft.toFixed(1)} sq ft base (${adjSqft('wall')} sq ft with waste)`);
+
   const lines = [
     `QUOTE REQUEST — Precision Tile Co.`,
     ``,
     `Room: ${state.roomName}`,
-    `Area: ${state.sqft.toFixed(1)} sq ft  (${adj} sq ft with ${pct()}% waste)`,
     `Surface: ${state.projectType}`,
+    `Waste factor: ${pct()}%`,
+    ...areaLines,
     ``,
     `TILE SELECTION:`,
-    ...surfaces.map(({ label, p }) => {
+    ...surfaces.map(({ label, surface, p }) => {
+      const adj   = adjSqft(surface);
       const cov   = parseFloat(p.coverage);
       const cases = Math.ceil(adj / cov);
       return `  ${label}: ${p.name} (SKU: ${p.sku}, ${p.size}) — ${cases} cases @ $${(cov * p.price).toFixed(2)}/case`;
