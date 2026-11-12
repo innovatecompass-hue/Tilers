@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Daltile Product Catalog — Custom Collection</title>
+<title>Tile Catalog: Daltile Products We Install | Precision Tile Co. — Shreveport, LA</title>
+<meta name="description" content="Browse 100+ Daltile floor, wall and backsplash tiles installed by Precision Tile Co. in Shreveport and Bossier City. Filter by room, material and price, then get an instant installation estimate."/>
+<link rel="canonical" href="https://tilers.vercel.app/daltile-catalog/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://tilers.vercel.app/daltile-catalog/"/>
+<meta property="og:title" content="Tile Catalog | Precision Tile Co."/>
+<meta property="og:description" content="Browse Daltile products we install across the ArkLaTex and get an instant installation estimate."/>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -16,6 +23,8 @@
     --card-bg:    #ffffff;
     --text:       #1a1a1a;
     --text-muted: #6b6b6b;
+    --gold-ink:   #7d6219;  /* gold for text/fills on white: WCAG AA */
+    --accent-ink: #c43a50;  /* red fill behind white text: WCAG AA */
     --border:     #e0ddd6;
     --sidebar-w:  260px;
     --radius:     10px;
@@ -25,6 +34,21 @@
 
   html { scroll-behavior: smooth; }
   body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── SITE BAR (links back to the main site) ── */
+  .site-bar {
+    background: #1a1714; color: rgba(255,255,255,.8);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 8px 32px; font-size: .85rem; flex-wrap: wrap;
+  }
+  .site-bar a { color: #fff; text-decoration: none; }
+  .site-bar a:hover { text-decoration: underline; }
+  .site-bar__links { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .site-bar__cta { background: #946306; padding: 6px 14px; border-radius: 6px; font-weight: 600; }
+  .skip-link { position: absolute; left: 1rem; top: -100px; z-index: 1000; background: #1a1714; color: #fff; padding: .75rem 1.25rem; border-radius: 6px; }
+  .skip-link:focus { top: 1rem; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #c8860a; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
   /* ── HEADER ── */
   header {
@@ -162,30 +186,30 @@
     padding: 3px 8px; border-radius: 20px; font-size: .67rem;
     font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
   }
-  .badge-new     { background: var(--accent);  color: #fff; }
-  .badge-best    { background: var(--gold);    color: #fff; }
+  .badge-new     { background: var(--accent-ink);  color: #fff; }
+  .badge-best    { background: var(--gold-ink);    color: #fff; }
   .badge-usa     { background: #2d6a4f;        color: #fff; }
   .badge-outdoor { background: #457b9d;        color: #fff; }
 
   .card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
-  .series-name { font-size: .72rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+  .series-name { font-size: .72rem; font-weight: 600; color: var(--gold-ink); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
   .card-name { font-size: .92rem; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 8px; }
   .specs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
   .spec { padding: 2px 7px; border-radius: 4px; background: var(--bg); font-size: .72rem; color: var(--text-muted); }
   .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
   .price { font-size: 1rem; font-weight: 700; color: var(--text); }
   .price-unit { font-size: .72rem; font-weight: 400; color: var(--text-muted); }
-  .stars { color: #f4b400; font-size: .82rem; letter-spacing: .5px; }
+  .stars { color: #9a6f00; font-size: .82rem; letter-spacing: .5px; }
   .review-count { font-size: .7rem; color: var(--text-muted); }
   .card-cta { padding: 0 12px 12px; }
   .card-quote-link {
     display: block; width: 100%; text-align: center;
     padding: 7px 10px; border-radius: 6px;
     font-size: .78rem; font-weight: 600;
-    color: var(--gold); border: 1.5px solid var(--gold);
+    color: var(--gold-ink); border: 1.5px solid var(--gold-ink);
     background: transparent; transition: all .15s;
   }
-  .card-quote-link:hover { background: var(--gold); color: var(--brand); }
+  .card-quote-link:hover { background: var(--gold-ink); color: #fff; }
 
   /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 80px 20px; color: var(--text-muted); }
@@ -212,7 +236,7 @@
   .modal-hero-swatch { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(5, 1fr); gap: 3px; padding: 3px; background: #ddd; }
   .modal-hero-swatch span { border-radius: 2px; }
   .modal-body { padding: 28px 32px; }
-  .modal-series { font-size: .8rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .modal-series { font-size: .8rem; font-weight: 700; color: var(--gold-ink); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
   .modal-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
   .modal-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
   .modal-desc { font-size: .92rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 24px; }
@@ -274,12 +298,21 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to products</a>
+<div class="site-bar">
+  <a href="../">← Precision Tile Co. · Shreveport, LA</a>
+  <div class="site-bar__links">
+    <a href="tel:+13185550182">(318) 555-0182</a>
+    <a href="../quote.html" class="site-bar__cta">Get an Instant Estimate</a>
+  </div>
+</div>
+
 <header>
   <div class="logo">
     <div class="logo-icon">
       <span></span><span></span><span></span><span></span>
     </div>
-    <h1>Daltile<small>Custom Product Catalog</small></h1>
+    <h1>Tile Catalog<small>Daltile products we install</small></h1>
   </div>
   <div class="header-stats">
     <div class="stat"><strong id="stat-total">—</strong><span>Products</span></div>
@@ -317,7 +350,7 @@
     <button class="clear-btn" onclick="clearAll()">Clear all filters</button>
   </aside>
 
-  <main>
+  <main id="main">
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
