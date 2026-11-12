@@ -31,37 +31,53 @@
     "mainEntityOfPage": "https://tilers.vercel.app/articles/how-much-does-bathroom-tile-installation-cost-shreveport.html"
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tilers.vercel.app/" },
+      { "@type": "ListItem", "position": 2, "name": "Articles", "item": "https://tilers.vercel.app/articles/" },
+      { "@type": "ListItem", "position": 3, "name": "Bathroom Tile Installation Cost in Shreveport" }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/style.css" />
   <link rel="stylesheet" href="../assets/css/articles.css" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#1a1714" />
 </head>
 <body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <header class="nav scrolled" id="nav">
     <div class="nav__inner container">
       <a href="../" class="nav__logo">
-        <span class="nav__logo-icon">◈</span>
+        <span class="nav__logo-icon" aria-hidden="true">◈</span>
         Precision Tile Co.
       </a>
-      <button class="nav__hamburger" id="hamburger" aria-label="Toggle menu">
+      <button class="nav__hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
-      <nav class="nav__links" id="navLinks">
+      <nav class="nav__links" id="navLinks" aria-label="Main">
         <a href="../#services">Services</a>
         <a href="../#gallery">Gallery</a>
         <a href="../#about">About</a>
         <a href="../#testimonials">Reviews</a>
         <a href="../#faq">FAQ</a>
-        <a href="../articles/">Articles</a>
-        <a href="../#contact" class="nav__cta">Free Quote</a>
+        <a href="../articles/" aria-current="page">Articles</a>
+        <a href="../daltile-catalog/">Tile Catalog</a>
+        <a href="../quote.html" class="nav__cta">Get a Quote</a>
       </nav>
     </div>
   </header>
 
   <div class="article-layout container">
-    <main class="article-body">
+    <main class="article-body" id="main">
 
       <div class="article-header">
         <div class="article-header__meta">
@@ -147,8 +163,8 @@
           <h3>Get a Free Quote for Your Shreveport Bathroom</h3>
           <p>Licensed, insured, and serving the ArkLaTex for 15+ years. We respond within one business day.</p>
           <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.2rem;">
-            <a href="tel:+13185550182" class="btn btn--primary">📞 Call (318) 555-0182</a>
-            <a href="../#contact" class="btn btn--ghost" style="border-color:rgba(0,0,0,.2);color:var(--color-dark);">Get a Written Quote</a>
+            <a href="tel:+13185550182" class="btn btn--primary"><span aria-hidden="true">📞</span> Call (318) 555-0182</a>
+            <a href="../quote.html" class="btn btn--ghost">Get an Instant Estimate</a>
           </div>
         </div>
 
@@ -171,8 +187,8 @@
       <div class="sidebar-card">
         <strong>Get a Free Quote</strong>
         <p>We serve Shreveport, Bossier City, Haughton, Minden & Marshall, TX.</p>
-        <a href="tel:+13185550182" class="btn btn--primary btn--full" style="margin-bottom:.75rem;">📞 (318) 555-0182</a>
-        <a href="../#contact" class="btn btn--full" style="border:1.5px solid var(--color-border);color:var(--color-dark);">Contact Form</a>
+        <a href="tel:+13185550182" class="btn btn--primary btn--full" style="margin-bottom:.75rem;"><span aria-hidden="true">📞</span> (318) 555-0182</a>
+        <a href="../quote.html" class="btn btn--full" style="border:1.5px solid var(--color-border);color:var(--color-dark);">Instant Online Estimate</a>
       </div>
       <div class="sidebar-card">
         <strong>More Articles</strong>
@@ -200,8 +216,8 @@
         <p>Free quotes — most delivered within 24 hours.</p>
       </div>
       <div class="cta-band__actions">
-        <a href="tel:+13185550182" class="btn btn--white">📞 (318) 555-0182</a>
-        <a href="../#contact" class="btn btn--outline-white">Get a Free Quote</a>
+        <a href="tel:+13185550182" class="btn btn--white"><span aria-hidden="true">📞</span> Call (318) 555-0182</a>
+        <a href="../quote.html" class="btn btn--outline-white">Get a Free Quote</a>
       </div>
     </div>
   </section>
@@ -209,13 +225,13 @@
   <footer class="footer">
     <div class="footer__bottom">
       <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
-        <p style="font-size:.8rem;color:rgba(255,255,255,.3);">© 2026 Precision Tile Co. | Shreveport, LA</p>
-        <p style="font-size:.8rem;color:rgba(255,255,255,.3);">Licensed & Insured | LA Contractor #LA-44821</p>
+        <p style="font-size:.8rem;color:rgba(255,255,255,.6);">© 2026 Precision Tile Co. | Shreveport, LA</p>
+        <p style="font-size:.8rem;color:rgba(255,255,255,.6);">Licensed &amp; Insured | LA Contractor #LA-44821</p>
       </div>
     </div>
   </footer>
 
-  <a href="tel:+13185550182" class="fab-call" aria-label="Call us">📞</a>
+  <a href="tel:+13185550182" class="fab-call" aria-label="Call Precision Tile Co. at (318) 555-0182"><span aria-hidden="true">📞</span></a>
   <script src="../assets/js/main.js"></script>
 </body>
 </html>

@@ -3,18 +3,27 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Get a Quote | Precision Tile Co. — Shreveport, LA</title>
+  <title>Instant Tile Installation Estimate | Precision Tile Co. — Shreveport, LA</title>
   <meta name="description" content="Get an instant tile installation estimate from Precision Tile Co. Enter your room dimensions, choose your Daltile product, and see a detailed quote in minutes."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="canonical" href="https://tilers.vercel.app/quote.html"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://tilers.vercel.app/quote.html"/>
+  <meta property="og:title" content="Instant Tile Estimate | Precision Tile Co. — Shreveport, LA"/>
+  <meta property="og:description" content="Enter your room size, pick your tile, and see an itemized installation estimate in minutes. Free, no obligation."/>
+  <meta property="og:site_name" content="Precision Tile Co."/>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <meta name="theme-color" content="#1a1714"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
   <style>
     /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* ── Design tokens — matches main site ── */
     :root {
-      --primary:    #c8860a;
+      --primary:    #8a5d06;  /* darkened brand gold: passes WCAG AA as text on light bg and behind white text */
+      --primary-bright: #c8860a; /* original brand gold, for accents on the dark nav only */
       --primary-dk: #a06e08;
       --dark:       #1a1714;
       --dark-soft:  #2d2924;
@@ -75,13 +84,13 @@
       font-size: 1.05rem;
       color: var(--white);
     }
-    .nav__logo-icon { color: var(--primary); font-size: 1.3rem; }
+    .nav__logo-icon { color: var(--primary-bright); font-size: 1.3rem; }
     .nav__badge {
       font-size: .78rem;
       font-weight: 700;
       letter-spacing: .07em;
       text-transform: uppercase;
-      color: var(--primary);
+      color: var(--primary-bright);
       background: rgba(200,134,10,.12);
       padding: 4px 10px;
       border-radius: 20px;
@@ -552,6 +561,15 @@
       .product-grid { grid-template-columns: repeat(2, 1fr); }
       .running-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
+    .req-consent { display: flex; gap: 8px; align-items: flex-start; font-size: .78rem; color: var(--mid); line-height: 1.5; margin-bottom: 14px; }
+    .req-consent input { margin-top: 3px; flex-shrink: 0; accent-color: var(--primary); }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--primary-bright); outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
   </style>
 </head>
 <body>
@@ -562,11 +580,13 @@
     ← Precision Tile Co.
   </a>
   <div class="nav__logo">
-    <span class="nav__logo-icon">◈</span>
+    <span class="nav__logo-icon" aria-hidden="true">◈</span>
     Precision Tile Co.
   </div>
   <span class="nav__badge">Quote Builder</span>
 </header>
+
+<main id="main">
 
 <!-- ── STEPPER ── -->
 <div class="stepper-wrap">
@@ -787,28 +807,36 @@
           <div class="req-card-body">
             <form id="reqForm" onsubmit="submitQuote(event)">
               <div class="req-group">
-                <label for="reqName">Your name *</label>
-                <input type="text" id="reqName" placeholder="John Smith" required/>
+                <label for="reqFirst">First name *</label>
+                <input type="text" id="reqFirst" autocomplete="given-name" placeholder="John" required/>
+              </div>
+              <div class="req-group">
+                <label for="reqLast">Last name</label>
+                <input type="text" id="reqLast" autocomplete="family-name" placeholder="Smith"/>
               </div>
               <div class="req-group">
                 <label for="reqEmail">Email *</label>
-                <input type="email" id="reqEmail" placeholder="john@example.com" required/>
+                <input type="email" id="reqEmail" autocomplete="email" placeholder="john@example.com" required/>
               </div>
               <div class="req-group">
                 <label for="reqPhone">Phone</label>
-                <input type="tel" id="reqPhone" placeholder="(318) 555-0000"/>
+                <input type="tel" id="reqPhone" autocomplete="tel" placeholder="(318) 555-0000"/>
               </div>
               <div class="req-group">
                 <label for="reqMsg">Additional notes</label>
                 <textarea id="reqMsg" placeholder="Timeline, special requirements, questions…"></textarea>
               </div>
+              <label class="req-consent" for="reqSms">
+                <input type="checkbox" id="reqSms" value="yes"/>
+                <span>Text me about my quote. Msg &amp; data rates may apply. Reply STOP to opt out.</span>
+              </label>
               <button type="submit" class="req-submit">Send Quote Request →</button>
               <p class="form-note">Your info is never shared. We respond within 1 business day.</p>
             </form>
-            <div class="success-msg" id="successMsg">
-              <div class="success-icon">✓</div>
-              <h4>Quote request sent!</h4>
-              <p>We'll review your estimate and reach out within one business day to confirm pricing and schedule a free site visit.</p>
+            <div class="success-msg" id="successMsg" role="status" aria-live="polite">
+              <div class="success-icon" aria-hidden="true">✓</div>
+              <h4 id="successTitle">Quote request sent!</h4>
+              <p id="successBody">We'll review your estimate and reach out within one business day to confirm pricing and schedule a free site visit.</p>
             </div>
           </div>
         </div>
@@ -819,15 +847,19 @@
 </section>
 
 
+</main>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT                                                        -->
 <!-- ================================================================ -->
+<script src="assets/js/site-config.js"></script>
+<script src="assets/js/lead-capture.js"></script>
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────
 const CONFIG = {
   laborPerSqft:  8,
   wasteOptions:  [0.10, 0.15, 0.20],
-  contactEmail:  "marcus@precisiontileco.com"
+  contactEmail:  window.SITE_CONFIG.LEAD_EMAIL
 };
 
 // ── STATE ───────────────────────────────────────────────────────────
@@ -1291,23 +1323,34 @@ function buildMailBody(surfaces, matCost, labor, total) {
 }
 
 // ── FORM SUBMIT ──────────────────────────────────────────────────────
-function submitQuote(e) {
+// Sends the quote via submitLead() (assets/js/lead-capture.js): webhook first,
+// pre-filled email as the fallback. The success copy reflects which one happened,
+// so we never claim a request was "sent" when the visitor still has to press Send.
+async function submitQuote(e) {
   e.preventDefault();
-  const name  = document.getElementById('reqName').value.trim();
-  const email = document.getElementById('reqEmail').value.trim();
-  const phone = document.getElementById('reqPhone').value.trim();
-  const msg   = document.getElementById('reqMsg').value.trim();
+  const btn = document.querySelector('#reqForm .req-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
 
-  const subject = encodeURIComponent(`Quote Request: ${state.roomName}`);
-  const body    = encodeURIComponent(
-    (window._quoteText || '') +
-    (msg   ? `\n\nCUSTOMER NOTES:\n${msg}` : '') +
-    `\n\nCONTACT:\nName: ${name}\nEmail: ${email}` +
-    (phone ? `\nPhone: ${phone}` : '')
-  );
+  const result = await window.submitLead({
+    source:       'website-quote-builder',
+    firstName:    document.getElementById('reqFirst').value,
+    lastName:     document.getElementById('reqLast').value,
+    email:        document.getElementById('reqEmail').value,
+    phone:        document.getElementById('reqPhone').value,
+    smsConsent:   document.getElementById('reqSms').checked,
+    service:      'Quote Builder: ' + state.roomName,
+    message:      document.getElementById('reqMsg').value,
+    quoteSummary: window._quoteText || '',
+    subject:      `Quote Request: ${state.roomName}`
+  });
 
-  window.location.href = `mailto:${CONFIG.contactEmail}?subject=${subject}&body=${body}`;
-
+  if (result.method === 'email') {
+    document.getElementById('successTitle').textContent = 'Almost done: press Send in your email app';
+    document.getElementById('successBody').textContent =
+      `Your email app opened with your full estimate filled in. Press Send and we'll reply within one business day. ` +
+      `No email app? Call us at ${window.SITE_CONFIG.PHONE_DISPLAY}.`;
+  }
   document.getElementById('reqForm').style.display  = 'none';
   document.getElementById('successMsg').style.display = 'block';
 }

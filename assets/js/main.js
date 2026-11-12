@@ -5,27 +5,30 @@
 
   // ── Nav scroll behavior ──
   const nav = document.getElementById('nav');
-  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  if (nav && !nav.classList.contains('scrolled')) {
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 
   // ── Mobile hamburger ──
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
 
-  hamburger.addEventListener('click', () => {
-    const open = navLinks.classList.toggle('open');
+  const setMenu = open => {
+    navLinks.classList.toggle('open', open);
     hamburger.classList.toggle('active', open);
+    hamburger.setAttribute('aria-expanded', String(open));
     document.body.style.overflow = open ? 'hidden' : '';
-  });
+  };
 
-  navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      hamburger.classList.remove('active');
-      document.body.style.overflow = '';
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => setMenu(!navLinks.classList.contains('open')));
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && navLinks.classList.contains('open')) { setMenu(false); hamburger.focus(); }
     });
-  });
+  }
 
   // ── Smooth-scroll active nav highlighting ──
   const sections = document.querySelectorAll('section[id]');
@@ -37,7 +40,7 @@
         navAnchors.forEach(a => {
           a.style.color = '';
           if (a.getAttribute('href') === '#' + entry.target.id) {
-            a.style.color = 'var(--color-primary)';
+            a.style.color = 'var(--color-primary-ink)';
           }
         });
       }
@@ -71,8 +74,9 @@
 
   filters.forEach(btn => {
     btn.addEventListener('click', () => {
-      filters.forEach(b => b.classList.remove('active'));
+      filters.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
 
       const filter = btn.dataset.filter;
       galleryItems.forEach(item => {
@@ -83,42 +87,55 @@
   });
 
   // ── Contact form ──
+  // Sends the lead via submitLead() (assets/js/lead-capture.js). Before this, the
+  // form only faked a submit and every inquiry was thrown away.
   const form = document.getElementById('contactForm');
   const successMsg = document.getElementById('formSuccess');
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
+  if (form) {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
 
-    // Basic validation
-    const required = form.querySelectorAll('[required]');
-    let valid = true;
+      const required = form.querySelectorAll('[required]');
+      let firstInvalid = null;
+      required.forEach(field => {
+        const invalid = !field.value.trim() || (field.type === 'email' && !field.checkValidity());
+        field.setAttribute('aria-invalid', String(invalid));
+        if (invalid && !firstInvalid) firstInvalid = field;
+      });
+      if (firstInvalid) { firstInvalid.focus(); return; }
 
-    required.forEach(field => {
-      const invalid = !field.value.trim();
-      field.style.borderColor = invalid ? '#ef4444' : '';
-      if (invalid) valid = false;
+      const submitBtn = form.querySelector('[type="submit"]');
+      const btnLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Sending…';
+      submitBtn.disabled = true;
+
+      const data = new FormData(form);
+      const result = await window.submitLead({
+        source:     'website-contact-form',
+        firstName:  data.get('fname'),
+        lastName:   data.get('lname'),
+        email:      data.get('email'),
+        phone:      data.get('phone'),
+        smsConsent: data.get('smsConsent') === 'yes',
+        service:    data.get('service'),
+        message:    data.get('message'),
+        subject:    `Website quote request: ${data.get('service') || 'Tile project'}`
+      });
+
+      submitBtn.textContent = btnLabel;
+      submitBtn.disabled = false;
+      successMsg.textContent = result.method === 'webhook'
+        ? '✓ Thanks! We got your request and will be in touch within one business day.'
+        : '✓ Almost done: your email app opened with your request filled in. Press Send and we\'ll reply within one business day.';
+      successMsg.classList.add('visible');
+      if (result.method === 'webhook') form.reset();
     });
 
-    if (!valid) return;
-
-    // Simulate submission
-    const submitBtn = form.querySelector('[type="submit"]');
-    submitBtn.textContent = 'Sending…';
-    submitBtn.disabled = true;
-
-    setTimeout(() => {
-      form.reset();
-      submitBtn.textContent = 'Send My Request →';
-      submitBtn.disabled = false;
-      successMsg.classList.add('visible');
-      setTimeout(() => successMsg.classList.remove('visible'), 6000);
-    }, 1200);
-  });
-
-  // Clear error state on input
-  form.querySelectorAll('input, select, textarea').forEach(field => {
-    field.addEventListener('input', () => { field.style.borderColor = ''; });
-  });
+    form.querySelectorAll('input, select, textarea').forEach(field => {
+      field.addEventListener('input', () => field.removeAttribute('aria-invalid'));
+    });
+  }
 
   // ── Phone number formatting ──
   const phoneInput = document.getElementById('phone');

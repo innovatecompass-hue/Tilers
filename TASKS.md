@@ -34,6 +34,12 @@
 - [ ] Ask tiler client for referrals to other tradespeople (offer referral incentive)
 - [ ] Mine **Google Maps** for local trades with no website or outdated site — cold outreach with live tiler site as case study
 
+## Lead Capture (Do Before Launch)
+
+- [ ] Create an n8n webhook (CORS: site domain only) that forwards leads to the GHL Speed-to-Lead inbound webhook, then paste its URL into `LEAD_WEBHOOK_URL` in `assets/js/site-config.js`. Until then, forms fall back to opening the visitor's email app.
+- [ ] Optional: set `LEAD_ERROR_LOG_URL` so failed lead posts are reported to monitoring
+- [ ] Replace placeholder business details (phone 555-0182, license #, email, testimonials) with real ones before going live
+
 ## Domain (Optional but Recommended)
 
 - [ ] Purchase a custom domain (e.g. precisiontileco.com)
